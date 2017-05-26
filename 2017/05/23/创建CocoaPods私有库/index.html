@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>创建CocoaPods私有库 | uShareit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="CocoaPods是开发中大家很熟悉的第三方库管理工具，通过它我们可以很方便的对绝大部分第三方库添加删除或更新，另外一方面，在项目开发过程中，会有一些可以复用的代码包或工具类，可是由于企业或自身原因不能对外公开，这时候通过CocoaPods的另一个功能–私有库来管理就很有必要了。 创建私有库需要准备两个仓库，一个用来管理代码，一个用来管理私有库信息。 下面我们开始分别创建它们！">
+<meta name="keywords" content="CocoaPods,私有库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="创建CocoaPods私有库">
+<meta property="og:url" content="https://github.com/uShareit/2017/05/23/创建CocoaPods私有库/index.html">
+<meta property="og:site_name" content="uShareit">
+<meta property="og:description" content="CocoaPods是开发中大家很熟悉的第三方库管理工具，通过它我们可以很方便的对绝大部分第三方库添加删除或更新，另外一方面，在项目开发过程中，会有一些可以复用的代码包或工具类，可是由于企业或自身原因不能对外公开，这时候通过CocoaPods的另一个功能–私有库来管理就很有必要了。 创建私有库需要准备两个仓库，一个用来管理代码，一个用来管理私有库信息。 下面我们开始分别创建它们！">
+<meta property="og:updated_time" content="2017-05-25T10:36:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="创建CocoaPods私有库">
+<meta name="twitter:description" content="CocoaPods是开发中大家很熟悉的第三方库管理工具，通过它我们可以很方便的对绝大部分第三方库添加删除或更新，另外一方面，在项目开发过程中，会有一些可以复用的代码包或工具类，可是由于企业或自身原因不能对外公开，这时候通过CocoaPods的另一个功能–私有库来管理就很有必要了。 创建私有库需要准备两个仓库，一个用来管理代码，一个用来管理私有库信息。 下面我们开始分别创建它们！">
+  
+    <link rel="alternate" href="/atom.xml" title="uShareit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">uShareit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://github.com/uShareit"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-创建CocoaPods私有库" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/23/创建CocoaPods私有库/" class="article-date">
+  <time datetime="2017-05-23T11:25:48.000Z" itemprop="datePublished">2017-05-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      创建CocoaPods私有库
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CocoaPods是开发中大家很熟悉的第三方库管理工具，通过它我们可以很方便的对绝大部分第三方库添加删除或更新，另外一方面，在项目开发过程中，会有一些可以复用的代码包或工具类，可是由于企业或自身原因不能对外公开，这时候通过CocoaPods的另一个功能–私有库来管理就很有必要了。</p>
+<p>创建私有库需要准备两个仓库，一个用来管理代码，一个用来管理私有库信息。</p>
+<p>下面我们开始分别创建它们！</p>
+<a id="more"></a>
+<h3 id="一、创建代码库（projectKit）"><a href="#一、创建代码库（projectKit）" class="headerlink" title="一、创建代码库（projectKit）"></a>一、创建代码库（projectKit）</h3><p>使用pods命令创建代码库。</p>
+<ol>
+<li>在github上新建项目projectKit(仓库地址为 <code>git@github.com:caomeili/projectKit.git</code> )</li>
+<li>在要创建工程的目录下，通过pods命令<code>pod lib create projectName</code> ，创建本地工程，控制台会输出：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">pod lib create projectKit</div><div class="line"></div><div class="line">Cloning `https://github.com/CocoaPods/pod-template.git` into `projectKit`.</div><div class="line">Configuring projectKit template.</div><div class="line">security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.</div><div class="line"></div><div class="line">------------------------------</div><div class="line"></div><div class="line">To get you started we need to ask a few questions, this should only take a minute.</div><div class="line"></div><div class="line">If this is your first time we recommend running through with the guide: </div><div class="line"> - http://guides.cocoapods.org/making/using-pod-lib-create.html</div><div class="line"> ( hold cmd and double click links to open in a browser. )</div></pre></td></tr></table></figure>
+<p>然后有四个问题需要回答（根据自己需要选择）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">What language do you want to use?? [ Swift / ObjC ] //构建项目语言</div><div class="line">ObjC</div><div class="line">Would you like to include a demo application with your library? [ Yes / No ]</div><div class="line">No</div><div class="line">Which testing frameworks will you use? [ Specta / Kiwi / None ] //选择一个测试框架</div><div class="line">None</div><div class="line">Would you like to do view based testing? [ Yes / No ] //是否基于view测试</div><div class="line">No</div><div class="line">What is your class prefix? //项目文件前缀</div><div class="line">Shareit</div></pre></td></tr></table></figure>
+<p>回车，创建成功后terminal的提示是</p>
+<figure class="highlight plain"><figcaption><span>successed</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Ace! you&apos;re ready to go!</div><div class="line"></div><div class="line"> We will start you off by opening your project in Xcode</div><div class="line"></div><div class="line">  open &apos;projectKit/Example/projectKit.xcworkspace&apos;</div><div class="line"></div><div class="line">To learn more about the template see https://github.com/CocoaPods/pod-template.git.</div><div class="line"></div><div class="line">To learn more about creating a new pod, see http://guides.cocoapods.org/making/making-a-cocoapod.</div></pre></td></tr></table></figure>
+<p>创建好的工程目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── Example</div><div class="line">│   ├── Podfile</div><div class="line">│   ├── Podfile.lock</div><div class="line">│   ├── Pods</div><div class="line">│   │   ├── Headers</div><div class="line">│   │   ├── Local\ Podspecs</div><div class="line">│   │   │   └── projectKit.podspec.json</div><div class="line">│   │   ├── Manifest.lock</div><div class="line">│   │   ├── Pods.xcodeproj</div><div class="line">│   │   │   ├── project.pbxproj</div><div class="line">│   │   │   └── xcuserdata</div><div class="line">│   │   └── Target\ Support\ Files</div><div class="line">│   │       ├── Pods-projectKit_Tests</div><div class="line">│   │       └── projectKit</div><div class="line">│   ├── Tests</div><div class="line">│   │   ├── Tests-Info.plist</div><div class="line">│   │   ├── Tests-Prefix.pch</div><div class="line">│   │   ├── Tests.m</div><div class="line">│   │   └── en.lproj</div><div class="line">│   │       └── InfoPlist.strings</div><div class="line">│   ├── projectKit.xcodeproj</div><div class="line">│   │   ├── project.pbxproj</div><div class="line">│   │   ├── project.xcworkspace</div><div class="line">│   │   │   └── contents.xcworkspacedata</div><div class="line">│   │   ├── xcshareddata</div><div class="line">│   │   │   └── xcschemes</div><div class="line">│   │   └── xcuserdata</div><div class="line">│   │       └── may.xcuserdatad</div><div class="line">│   └── projectKit.xcworkspace</div><div class="line">│       ├── contents.xcworkspacedata</div><div class="line">│       └── xcuserdata</div><div class="line">│           └── may.xcuserdatad</div><div class="line">├── LICENSE</div><div class="line">├── README.md</div><div class="line">├── _Pods.xcodeproj -&gt; Example/Pods/Pods.xcodeproj</div><div class="line">├── projectKit</div><div class="line">│   ├── Assets</div><div class="line">│   └── Classes</div><div class="line">│       └── ReplaceMe.m // 这里要替换成私有库要存放的代码文件</div><div class="line">└── projectKit.podspec // 要提交到另一个仓库的文件</div></pre></td></tr></table></figure>
+<h4 id="一-、修改-podspec文件，给私有库添加文件"><a href="#一-、修改-podspec文件，给私有库添加文件" class="headerlink" title="(一)、修改.podspec文件，给私有库添加文件"></a>(一)、修改.podspec文件，给私有库添加文件</h4><p>在该工程目录下可以看到.podspec文件，文件名与该工程名一致，这个文件是对代码库的版本信息，地址等进行管理的，我们需要对他进行一些参数的修改，打开后根据需要修改参数(修改参数需要注意，会影响之后的验证，稍不留神验证不过去了，具体参数含义参考<a href="https://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">sepc文件官方规范文档</a>)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">s.name  =  &apos;projectKit&apos; // name必须和podspec文件名一致</div><div class="line">s.author = &#123; &apos;caoml&apos; =&gt; &apos;caoml@ushareit,com&apos; &#125; 或  &apos;caoml&apos;  或  &apos;caoml&apos;,&apos;may&apos;   或   &#123; &apos;caoml&apos; =&gt; &apos;caoml@ushareit,com&apos;, &apos;may&apos; =&gt; &apos;may@ushareit,com&apos; &#125;</div><div class="line"></div><div class="line">s.version          = &apos;0.3.0&apos; // 提交代码后，注意添加与该参数一致的标签</div><div class="line"></div><div class="line">s.summary = &apos;projectKit is a testKit.&apos;  // 注意语法，大小写，标点符号</div><div class="line"></div><div class="line">s.homepage = &apos;https://github.com/caoml/projectKit&apos;</div><div class="line"></div><div class="line">s.source  = &#123; :git =&gt; &apos;git@github.com:caomeili/projectKit.git&apos;, :tag =&gt; s.version.to_s &#125;  // 代码库地址</div><div class="line"></div><div class="line">s.license  = &#123; :type =&gt; &apos;MIT&apos;, :file =&gt; &apos;LICENSE&apos; &#125;  // 可以忽略</div><div class="line"></div><div class="line">s.description      = &lt;&lt;-DESC</div><div class="line">welocme to projectKit   // 必须遵循这个格式，不能合成一行或两行</div><div class="line">                       DESC                                              </div><div class="line"></div><div class="line">s.source_files = &apos;projectKit/Classes/*.&#123;h,m&#125;&apos;  // 路径是从与.podspec文件平级开始的</div><div class="line"></div><div class="line">s.public_header_files = &apos;Pod/Classes/***/.h&apos;  //公开头文件地址修改好podspec后使用命令</div></pre></td></tr></table></figure>
+<p>在工目录<code>~/projectKit/projectKit/Classes/</code>下添加文件<code>ProjectView.h,porjectView.m</code>（可以新建，也可以直接从别的项目里复制过来，但是要保证是可运行的），现在目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── Example</div><div class="line">│   ├── Podfile</div><div class="line">│   ├── Podfile.lock</div><div class="line">│   ├── Pods</div><div class="line">│   │   ├── Headers</div><div class="line">│   │   ├── Local\ Podspecs</div><div class="line">│   │   │   └── projectKit.podspec.json</div><div class="line">│   │   ├── Manifest.lock</div><div class="line">│   │   ├── Pods.xcodeproj</div><div class="line">│   │   │   ├── project.pbxproj</div><div class="line">│   │   │   └── xcuserdata</div><div class="line">│   │   └── Target\ Support\ Files</div><div class="line">│   │       ├── Pods-projectKit_Tests</div><div class="line">│   │       └── projectKit</div><div class="line">│   ├── Tests</div><div class="line">│   │   ├── Tests-Info.plist</div><div class="line">│   │   ├── Tests-Prefix.pch</div><div class="line">│   │   ├── Tests.m</div><div class="line">│   │   └── en.lproj</div><div class="line">│   │       └── InfoPlist.strings</div><div class="line">│   ├── projectKit.xcodeproj</div><div class="line">│   │   ├── project.pbxproj</div><div class="line">│   │   ├── project.xcworkspace</div><div class="line">│   │   │   └── contents.xcworkspacedata</div><div class="line">│   │   ├── xcshareddata</div><div class="line">│   │   │   └── xcschemes</div><div class="line">│   │   └── xcuserdata</div><div class="line">│   │       └── may.xcuserdatad</div><div class="line">│   └── projectKit.xcworkspace</div><div class="line">│       ├── contents.xcworkspacedata</div><div class="line">│       └── xcuserdata</div><div class="line">│           └── may.xcuserdatad</div><div class="line">├── LICENSE</div><div class="line">├── README.md</div><div class="line">├── _Pods.xcodeproj -&gt; Example/Pods/Pods.xcodeproj</div><div class="line">├── projectKit</div><div class="line">│   ├── Assets</div><div class="line">│   └── Classes</div><div class="line">│       ├── ProjectView.h</div><div class="line">│       └── ProjectView.m</div><div class="line">└── projectKit.podspec</div></pre></td></tr></table></figure>
+<h4 id="二-、验证-podspec文件"><a href="#二-、验证-podspec文件" class="headerlink" title="(二)、验证.podspec文件"></a>(二)、验证.podspec文件</h4><p>.podspec文件修改完成后为了保证提交后是可用的，我们需要对它进行验证，使用命令<code>pod lib lint</code>验证，如有warnings 命令后加–allow-warnings可以忽略warnings，终端输出为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">pod lib lint --allow-warnings</div><div class="line"></div><div class="line"> -&gt; projectKit (0.1.0)</div><div class="line">    - WARN  | attributes: Missing required attribute `license`.</div><div class="line">    - WARN  | license: Missing license type.</div><div class="line">    - WARN  | source: Git SSH URLs will NOT work for people behind firewalls configured to only allow HTTP, therefore HTTPS is preferred.</div><div class="line">    - WARN  | description: The description is shorter than the summary.</div><div class="line">    - WARN  | url: There was a problem validating the URL www.ushareit.com.</div><div class="line"></div><div class="line">projectKit passed validation.</div></pre></td></tr></table></figure>
+<p><code>projectKit passed validation.</code>表示验证通过。</p>
+<h4 id="三-、本地验证私有库"><a href="#三-、本地验证私有库" class="headerlink" title="(三)、本地验证私有库"></a>(三)、本地验证私有库</h4><p>以上我们完成了创建私有库的大部分工作，在提交github之前，我们需要在本地测试一下私有库是否可用。</p>
+<p>打开我们创建的Example工程，打开podfile，在podfile中我们需要像引用其他第三方库一样把我们创建的私有库放到文件中，同时因为我们的私有库还在本地，所以需要给pod提供一个路径，具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">platform :ios, &apos;9.0&apos;</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">	pod &apos;MBProgressHUD&apos;</div><div class="line">	pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, :podspec =&gt; &apos;~/projectKit/projectKit.podspec&apos; </div><div class="line">	// 或者pod &apos;projectKit&apos;, :path =&gt; &apos;../&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>在该工程目录下执行<code>pod update</code>命令，更新完成后打开项目，看到库文件被加载到<code>development Pods</code>子项目中，证明本地库可用。</p>
+<p>将本地代码库提交到 <code>projectKit (git@github.com:caomeili/projectKit.git)</code>，<strong>给本次提交添加与s.version参数一致的标签</strong>。</p>
+<p>到这一步，私有库是只能是在本地该项目中使用，可是在真正的开发中，往往是多人协作的，要想参与人员都能够使用它则必须创建另一个库来管理podspec文件。</p>
+<h3 id="二、创建spec私有库"><a href="#二、创建spec私有库" class="headerlink" title="二、创建spec私有库"></a>二、创建spec私有库</h3><ol>
+<li><p>在github上新建仓库projectPods (仓库地址为git@github.com:caomeili/projectPods.git，在这里我用的是public仓库，如果自己项目中用，最好是private)。</p>
+</li>
+<li><p>执行命令 <code>pod repo add kitName  specGitAddress</code> ，把私有库名称和podsepc管理库关联起来：</p>
+<p><code>pod repo add projectPods git@github.com:caomeili/projectPods.git</code></p>
+</li>
+<li><p>在~/.cocoapods/repos目录下可以看到大概目录结构如下（该目录是隐藏文件，显示隐藏文件命令在文章末尾）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── master</div><div class="line">│   ├── CocoaPods-version.yml</div><div class="line">│   ├── README.md</div><div class="line">│   └── Specs </div><div class="line">└── projectPods</div><div class="line">    └── README.md</div></pre></td></tr></table></figure>
+<p>目录结构中，master是CocoaPods官方spec管理库，在master目录下的repos文件夹包括所有公开第三方库各个版本的podspec文件。</p>
+</li>
+<li><p>使用命令 (pod repo push (私有库名)  (spec文件名))，把代码库中的podspec文件提交到spec管理库中：</p>
+</li>
+</ol>
+<p><code>pod repo push projectPods projectKit.podspec --allow-warnings</code></p>
+<p>提交成功后在~/.cocoapods/repo／projectPods目录下就可以看到我们的projectKit私有库了。目录结构如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── README.md</div><div class="line">└── projectKit</div><div class="line">    └── 0.3.0</div><div class="line">        └── projectKit.podspec</div></pre></td></tr></table></figure>
+<p>此时在远端git上也会有一次提交，这样我们的私有库就创建好了。</p>
+<p><strong>tip1</strong>: 如果在pods目录下没有看到master，执行pod setup命令成功后可以看到。</p>
+<h3 id="三、私有库的使用"><a href="#三、私有库的使用" class="headerlink" title="三、私有库的使用"></a>三、私有库的使用</h3><p>打开一个包含CocoaPods的工程，与引用其他第三方库一样修改podfile 文件，同时因为是私有库，我们需要把spec管理库地址写上去，修改如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">source &apos;https://github.com/CocoaPods/Specs.git&apos;  // 官方spec管理库地址</div><div class="line">source ‘git@github.com:caomeili/projectPods.git’ // 私有spec管理库地址</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">    pod &apos;MBProgressHUD&apos;</div><div class="line">    pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, &apos;~&gt; 0.3.0&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>然后执行pod update更新依赖库， 就可以看到我们私有库的库文件在pods的子文件夹中了。</p>
+<p>综上，我们的私有库就创建完成了！</p>
+<h3 id="四、私有库的升级"><a href="#四、私有库的升级" class="headerlink" title="四、私有库的升级"></a>四、私有库的升级</h3><p>再私有库的使用过程中，不可避免的我们需要对它进行修改升级，接下来解释一下如何对私有库进行升级使用。</p>
+<ol>
+<li><p>私有库的版本控制有两个重要参数，一个是.podspec文件中的<strong><code>s.version</code></strong>，另一个是代码库提交时添加的标签；</p>
+</li>
+<li><p>在对代码库进行修改后，一定要同时修改.podspec文件的<strong><code>s.version</code></strong>,提交代码到本地后，给本次提交添加与<strong><code>s.version</code></strong>同样的值；</p>
+</li>
+<li><p>在代码库根目录下，再次执行命令<code>pod repo push (私有库名)  (spec文件名)</code>，更新spec管理库：</p>
+<p><code>pod repo push projectPods projectKit.podspec --allow-warnings</code>      </p>
+</li>
+<li><p>再次查看<code>~/.cocoapods/repos</code>目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">└── repos</div><div class="line">├── master</div><div class="line">│   ├── CocoaPods-version.yml</div><div class="line">│   ├── README.md</div><div class="line">│   └── Specs   </div><div class="line">└── projectPods</div><div class="line">    ├── README.md</div><div class="line">    └── projectKit</div><div class="line">        ├── 0.3.0</div><div class="line">│       └── 0.4.0</div></pre></td></tr></table></figure>
+<p>我们发现，projectKit库包含了两个文件夹，分别对应的是两次提交的版本，每个文件夹下都是对应版本的.podspec文件，使用时，只要在<code>pod &#39;projectKit&#39;, &#39;~&gt; 0.4.0&#39;</code>后添加对应的版本号就可以拿到不同版本的代码了，至此，我们对私有库的升级就完成了。</p>
+</li>
+</ol>
+<h3 id="五、私有库引用其他第三方库"><a href="#五、私有库引用其他第三方库" class="headerlink" title="五、私有库引用其他第三方库"></a>五、私有库引用其他第三方库</h3><h4 id="一-、引用静态库和framework"><a href="#一-、引用静态库和framework" class="headerlink" title="(一)、引用静态库和framework"></a>(一)、引用静态库和framework</h4><ol>
+<li><p>将要引用的第三方库(这里包括静态库和.framework)添加到代码库<code>~/projectKit/projectKit/Classes</code>目录下，目录结构为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── Example</div><div class="line">│   ├── Podfile</div><div class="line">│   ├── Podfile.lock</div><div class="line">│   ├── Pods</div><div class="line">│   │   ├── Local\ Podspecs</div><div class="line">│   │   │   └── projectKit.podspec.json</div><div class="line">│   │   ├── Manifest.lock</div><div class="line">│   │   ├── Pods.xcodeproj</div><div class="line">│   │   │   ├── project.pbxproj</div><div class="line">│   │   │   └── xcuserdata</div><div class="line">│   │   ├── Target\ Support\ Files</div><div class="line">│   │   │   ├── Pods-projectKit_Tests</div><div class="line">│   │   │   └── projectKit</div><div class="line">│   │   └── projectKit</div><div class="line">│   │       ├── LICENSE</div><div class="line">│   │       ├── README.md</div><div class="line">│   │       └── projectKit</div><div class="line">│   ├── Tests</div><div class="line">│   │   ├── Tests-Info.plist</div><div class="line">│   │   ├── Tests-Prefix.pch</div><div class="line">│   │   ├── Tests.m</div><div class="line">│   │   └── en.lproj</div><div class="line">│   │       └── InfoPlist.strings</div><div class="line">│   ├── projectKit.xcodeproj</div><div class="line">│   │   ├── project.pbxproj</div><div class="line">│   │   ├── project.xcworkspace</div><div class="line">│   │   │   └── contents.xcworkspacedata</div><div class="line">│   │   ├── xcshareddata</div><div class="line">│   │   │   └── xcschemes</div><div class="line">│   │   └── xcuserdata</div><div class="line">│   │       └── may.xcuserdatad</div><div class="line">│   └── projectKit.xcworkspace</div><div class="line">│       ├── contents.xcworkspacedata</div><div class="line">│       └── xcuserdata</div><div class="line">│           └── may.xcuserdatad</div><div class="line">├── LICENSE</div><div class="line">├── README.md</div><div class="line">├── _Pods.xcodeproj -&gt; Example/Pods/Pods.xcodeproj</div><div class="line">├── projectKit</div><div class="line">│   ├── Crashlytics</div><div class="line">│       │   ├── Crashlytic.framework</div><div class="line">│       │   │   ├── README</div><div class="line">│       │   │   └── submit</div><div class="line">│       │   ├── README.md</div><div class="line">│       │   ├── iOS</div><div class="line">│       │   │   └── Crashlytics.framework // 添加自己的framework，系统的不用添加</div><div class="line">│       │   └── submit</div><div class="line">│       └── xxx.a  // 添加自己的静态库文件，系统的不用添加</div><div class="line">└── projectKit.podspec</div></pre></td></tr></table></figure>
+</li>
+<li><p>如下修改.podspec文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">s.version = &apos;0.5.0&apos;</div><div class="line">s.libraries = &apos;xml2&apos;, &apos;z&apos;</div><div class="line">// 引用静态库：’(.ios).library’。去掉头尾的lib，用”,”分割， 如：libxml2.lib和libz.lib.</div><div class="line"></div><div class="line">s.ios.vendored_libraries = &apos;projectKit/Classes/**/xxx.a&apos; </div><div class="line">// 第三方静态库文件使用s.ios.vendored_libraries ，路径从.podspec所在目录为根目录开始写</div><div class="line"></div><div class="line">s.frameworks = &apos;UIKit&apos;, &apos;MapKit&apos; </div><div class="line">// 多个系统framework,系统framework使用s.frameworks</div><div class="line"></div><div class="line">s.ios.vendored_frameworks = &apos;projectKit/Classes/**/Crashlytics.framework&apos; </div><div class="line">// 第三方framework使用s.ios.vendored_frameworks，路径从.podspec所在目录为根目录开始写</div></pre></td></tr></table></figure>
+<p>提交代码修改到本地，并给此次提交添加标签为0.5.0，然后将修改提交到远端仓库；</p>
+</li>
+<li><p>执行命令<code>pod repo push (私有库名)  (spec文件名)</code>，更新远端spec管理库：</p>
+<p><code>pod repo push projectPods projectKit.podspec --allow-warnings</code>      </p>
+</li>
+<li><p>到使用CocoaPods项目中修改podfile文件，然后在该项目目录下执行<code>pod update</code>，成功后就可以在pods子文件夹下看到静态库和framework文件了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">source &apos;https://github.com/CocoaPods/Specs.git&apos;  // 官方spec管理库地址</div><div class="line">source ‘git@192.168.250.71:ios/cocoapods.git’ // 私有spec管理库地址</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">    pod &apos;MBProgressHUD&apos;</div><div class="line">    pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, &apos;~&gt; 0.5.0&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="二-、私有库引用pods库"><a href="#二-、私有库引用pods库" class="headerlink" title="(二)、私有库引用pods库"></a>(二)、私有库引用pods库</h4><p>pods库分两种，一种是pods官方包括的第三方库，另一种是没有公开的私有库。</p>
+<h5 id="引用官方第三方库"><a href="#引用官方第三方库" class="headerlink" title="引用官方第三方库"></a>引用官方第三方库</h5><ol>
+<li><p>私有库要引用pods官方的第三方库只需要在.podspec文件中添加以下参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">s.dependency &apos;AFNetworking&apos;, &apos;~&gt;3.0&apos;</div><div class="line">s.dependency &apos;JSONKit&apos;, &apos;~&gt;2.0&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改s.version，提交代码修改到本地，并给此次提交添加标签，然后将修改提交到远端仓库；</p>
+</li>
+<li><p>执行命令<code>pod repo push (私有库名)  (spec文件名)</code>，更新远端spec管理库：<br><code>pod repo push projectPods projectKit.podspec --allow-warnings</code>   </p>
+</li>
+<li><p>到工程目录下修改podfile文件的私有库版本号，并执行pod update,成功后在pods子目录下可以看到<code>AFNetworking</code>和<code>JSONKit</code>。</p>
+</li>
+</ol>
+<h5 id="引用私有库"><a href="#引用私有库" class="headerlink" title="引用私有库"></a>引用私有库</h5><ol>
+<li><p>私有库a引用私有库b时，同样需要在.podspec文件中添加参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">s.dependency &apos;projectKit2&apos;, &apos;~&gt;0.1.0&apos; // 这里我的另一个私有库名字是projectKit2</div></pre></td></tr></table></figure>
+<p><strong>tip</strong>:如果要对spec文件进行验证，则需要在执行<code>pod spec lint</code>命令时在后边接上私有库的资源地址，否则pods将会从cocoapods官方查询。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod spec lint --sources=git@192.168.250.71:ios/cocoapods2.git,master --allow-warnings // source后是projectKit2的spec管理库地址和分支名</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改s.version，提交代码修改到本地，并给此次提交添加标签，然后将修改提交到远端仓库；</p>
+</li>
+<li><p>执行更新远端spec 管理库命令时同样需要在命令后加上私有库b的资源地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod repo push projectPods projectKit.podspec --sources=git@192.168.250.71:ios/cocoapods2.git,master --allow-warnings</div></pre></td></tr></table></figure>
+</li>
+<li><p>到工程目录下修改podfile文件，执行pod update,成功后在pods子目录下可以看到<code>projectKit2</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">source ‘git@192.168.250.71:ios/cocoapods.git’ // 私有库a spec管理库地址</div><div class="line">source ‘git@192.168.250.71:ios/cocoapods2.git’ // a引用的私有库b spec管理库地址</div><div class="line">source &apos;https://github.com/CocoaPods/Specs.git&apos; // 官方spec管理库地址</div><div class="line">platform :ios, &apos;9.0&apos;</div><div class="line">target &apos;podsTest&apos; do</div><div class="line">  # Uncomment the next line if you&apos;re using Swift or would like to use dynamic frameworks</div><div class="line">  #use_frameworks!</div><div class="line">  pod &apos;projectKit&apos;, &apos;~&gt; 1.0.3’ // 引用私有库b的私有库a名称和版本号</div><div class="line">end</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>tip1</strong>:在对私有库升级时，如果s.version和提交时标签不一致，使用时获取到的代码与s.version的版本号一致。</p>
+<p><strong>tip2</strong>:pod repo list 查看当前库源</p>
+<p><strong>tip3</strong>:显示隐藏文件命令：</p>
+<p><code>defaults write com.apple.finder AppleShowAllFiles -bool true</code></p>
+<p>关闭隐藏文件命令：</p>
+<p><code>defaults write com.apple.finder AppleShowAllFiles -bool false</code>。</p>
+<p><strong>tip4</strong>: 自己创建podspec文件命令:</p>
+<p><code>pod spec create podspec名 代码库地址</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/uShareit/2017/05/23/创建CocoaPods私有库/" data-id="cj35eyevp0000oifyblb5kwtk" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/私有库/">私有库</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/私有库/">私有库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/私有库/" style="font-size: 10px;">私有库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/05/23/创建CocoaPods私有库/">创建CocoaPods私有库</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 uShareit<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
