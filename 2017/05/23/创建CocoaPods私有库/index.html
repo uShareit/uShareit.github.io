@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://github.com/uShareit/2017/05/23/创建CocoaPods私有库/index.html">
 <meta property="og:site_name" content="uShareit">
 <meta property="og:description" content="CocoaPods是开发中大家很熟悉的第三方库管理工具，通过它我们可以很方便的对绝大部分第三方库添加删除或更新，另外一方面，在项目开发过程中，会有一些可以复用的代码包或工具类，可是由于企业或自身原因不能对外公开，这时候通过CocoaPods的另一个功能–私有库来管理就很有必要了。 创建私有库需要准备两个仓库，一个用来管理代码，一个用来管理私有库信息。 下面我们开始分别创建它们！">
-<meta property="og:updated_time" content="2017-05-25T10:36:19.000Z">
+<meta property="og:updated_time" content="2017-06-07T06:18:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="创建CocoaPods私有库">
 <meta name="twitter:description" content="CocoaPods是开发中大家很熟悉的第三方库管理工具，通过它我们可以很方便的对绝大部分第三方库添加删除或更新，另外一方面，在项目开发过程中，会有一些可以复用的代码包或工具类，可是由于企业或自身原因不能对外公开，这时候通过CocoaPods的另一个功能–私有库来管理就很有必要了。 创建私有库需要准备两个仓库，一个用来管理代码，一个用来管理私有库信息。 下面我们开始分别创建它们！">
@@ -111,7 +111,7 @@
 <p><code>projectKit passed validation.</code>表示验证通过。</p>
 <h4 id="三-、本地验证私有库"><a href="#三-、本地验证私有库" class="headerlink" title="(三)、本地验证私有库"></a>(三)、本地验证私有库</h4><p>以上我们完成了创建私有库的大部分工作，在提交github之前，我们需要在本地测试一下私有库是否可用。</p>
 <p>打开我们创建的Example工程，打开podfile，在podfile中我们需要像引用其他第三方库一样把我们创建的私有库放到文件中，同时因为我们的私有库还在本地，所以需要给pod提供一个路径，具体代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">platform :ios, &apos;9.0&apos;</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">	pod &apos;MBProgressHUD&apos;</div><div class="line">	pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, :podspec =&gt; &apos;~/projectKit/projectKit.podspec&apos; </div><div class="line">	// 或者pod &apos;projectKit&apos;, :path =&gt; &apos;../&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">platform :ios, &apos;9.0&apos;</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">	pod &apos;MBProgressHUD&apos;</div><div class="line">	pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, :podspec =&gt; &apos;~/projectKit/projectKit.podspec&apos; </div><div class="line">	# 或者pod &apos;projectKit&apos;, :path =&gt; &apos;../&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
 <p>在该工程目录下执行<code>pod update</code>命令，更新完成后打开项目，看到库文件被加载到<code>development Pods</code>子项目中，证明本地库可用。</p>
 <p>将本地代码库提交到 <code>projectKit (git@github.com:caomeili/projectKit.git)</code>，<strong>给本次提交添加与s.version参数一致的标签</strong>。</p>
 <p>到这一步，私有库是只能是在本地该项目中使用，可是在真正的开发中，往往是多人协作的，要想参与人员都能够使用它则必须创建另一个库来管理podspec文件。</p>
@@ -134,7 +134,7 @@
 <p>此时在远端git上也会有一次提交，这样我们的私有库就创建好了。</p>
 <p><strong>tip1</strong>: 如果在pods目录下没有看到master，执行pod setup命令成功后可以看到。</p>
 <h3 id="三、私有库的使用"><a href="#三、私有库的使用" class="headerlink" title="三、私有库的使用"></a>三、私有库的使用</h3><p>打开一个包含CocoaPods的工程，与引用其他第三方库一样修改podfile 文件，同时因为是私有库，我们需要把spec管理库地址写上去，修改如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">source &apos;https://github.com/CocoaPods/Specs.git&apos;  // 官方spec管理库地址</div><div class="line">source ‘git@github.com:caomeili/projectPods.git’ // 私有spec管理库地址</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">    pod &apos;MBProgressHUD&apos;</div><div class="line">    pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, &apos;~&gt; 0.3.0&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">source &apos;https://github.com/CocoaPods/Specs.git&apos;  # 官方spec管理库地址</div><div class="line">source ‘git@github.com:caomeili/projectPods.git’ # 私有spec管理库地址</div><div class="line">target &quot;uShareit&quot; do</div><div class="line">    pod &apos;MBProgressHUD&apos;</div><div class="line">    pod &apos;Alamofire&apos;</div><div class="line">	pod &apos;projectKit&apos;, &apos;~&gt; 0.3.0&apos;</div><div class="line">end</div></pre></td></tr></table></figure>
 <p>然后执行pod update更新依赖库， 就可以看到我们私有库的库文件在pods的子文件夹中了。</p>
 <p>综上，我们的私有库就创建完成了！</p>
 <h3 id="四、私有库的升级"><a href="#四、私有库的升级" class="headerlink" title="四、私有库的升级"></a>四、私有库的升级</h3><p>再私有库的使用过程中，不可避免的我们需要对它进行修改升级，接下来解释一下如何对私有库进行升级使用。</p>
@@ -205,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/uShareit/2017/05/23/创建CocoaPods私有库/" data-id="cj35eyevp0000oifyblb5kwtk" class="article-share-link">Share</a>
+      <a data-url="https://github.com/uShareit/2017/05/23/创建CocoaPods私有库/" data-id="cj3mlszr6000037fyd3ffd1e6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/私有库/">私有库</a></li></ul>
